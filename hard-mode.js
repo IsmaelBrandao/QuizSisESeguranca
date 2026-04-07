@@ -1,4 +1,21 @@
-const hard = (question, options) => ({ question, options });
+function plainText(text) {
+  return text
+    .replace(/Arranjo integrado/gi, "Conjunto integrado")
+    .replace(/fragilidade estrutural/gi, "falha")
+    .replace(/suscetível a exploração/gi, "que pode ser explorada")
+    .replace(/preexistente/gi, "já existente")
+    .replace(/deliberadamente/gi, "de propósito")
+    .replace(/contingência operacional/gi, "continuidade do serviço")
+    .replace(/circunstância/gi, "situação")
+    .replace(/\s{2,}/g, " ")
+    .replace(/\s+([?.!,;:])/g, "$1")
+    .replace(/\(\s*\)/g, "")
+    .trim();
+}
+
+const hard = (_question, options) => ({
+  options: options.map((option) => plainText(option))
+});
 
 window.quizQuestionOverrides = {
   // Fundamentos

@@ -47,6 +47,7 @@ const state = {
 
 const QUESTION_OVERRIDES = {
   "fund-01": "Qual alternativa define melhor segurança da informação?",
+  "fund-02": "Quais são os três pilares da segurança da informação?",
   "fund-03": "Por que as pessoas são consideradas um elo crítico da segurança da informação?",
   "fund-04": "Qual é o principal papel dos processos na segurança da informação?",
   "fund-05": "Qual alternativa representa corretamente o papel da tecnologia na segurança da informação?",
@@ -119,21 +120,25 @@ const CONTENT_OVERRIDES = window.quizQuestionOverrides || {};
 
 function cleanupCopy(text) {
   return text
-    .replace(/apresentada nos slides/gi, "mais correta")
-    .replace(/segundo o material/gi, "em segurança da informação")
-    .replace(/segundo a aula \d+/gi, "em segurança da informação")
-    .replace(/citada na aula \d+/gi, "em segurança da informação")
-    .replace(/de acordo com os slides/gi, "em segurança da informação")
-    .replace(/no resumo dos slides/gi, "em um cenário bancário")
-    .replace(/nos slides/gi, "nesse contexto")
-    .replace(/no slide/gi, "na definição")
-    .replace(/os slides/gi, "esse conteúdo")
-    .replace(/o slide/gi, "a definição")
+    .replace(/apresentada nos slides/gi, "")
+    .replace(/segundo o material/gi, "")
+    .replace(/segundo a aula \d+/gi, "")
+    .replace(/citada na aula \d+/gi, "")
+    .replace(/de acordo com os slides/gi, "")
+    .replace(/no resumo dos slides/gi, "")
+    .replace(/nos slides/gi, "")
+    .replace(/no slide/gi, "")
+    .replace(/os slides/gi, "")
+    .replace(/o slide/gi, "")
     .replace(/na aula de confidencialidade/gi, "na proteção da confidencialidade")
-    .replace(/em aula/gi, "nesse contexto")
-    .replace(/na aula/gi, "nesse contexto")
+    .replace(/em aula/gi, "")
+    .replace(/na aula/gi, "")
     .replace(/a própria aula sugere/gi, "uma boa resposta é")
     .replace(/orientação do material/gi, "estrutura recomendada")
+    .replace(/conteúdo/gi, "tema")
+    .replace(/material/gi, "tema")
+    .replace(/formulação/gi, "definição")
+    .replace(/^,\s*/g, "")
     .replace(/\s{2,}/g, " ")
     .replace(/\s+([?.!,;:])/g, "$1")
     .trim();
