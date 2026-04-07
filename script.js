@@ -115,6 +115,8 @@ const EXPLANATION_OVERRIDES = {
   "mix-03": "Hash é um controle clássico para apoiar integridade da informação."
 };
 
+const CONTENT_OVERRIDES = window.quizQuestionOverrides || {};
+
 function cleanupCopy(text) {
   return text
     .replace(/apresentada nos slides/gi, "mais correta")
@@ -138,11 +140,23 @@ function cleanupCopy(text) {
 }
 
 function normalizeQuestionBank(questionBank) {
-  return questionBank.map((question) => ({
-    ...question,
-    question: QUESTION_OVERRIDES[question.id] || cleanupCopy(question.question),
-    explanation: EXPLANATION_OVERRIDES[question.id] || cleanupCopy(question.explanation)
-  }));
+  return questionBank.map((question) => {
+    const contentOverride = CONTENT_OVERRIDES[question.id] || null;
+
+    return {
+      ...question,
+      ...contentOverride,
+      difficulty: contentOverride?.difficulty || (contentOverride ? "Hard" : question.difficulty),
+      question:
+        contentOverride?.question ||
+        QUESTION_OVERRIDES[question.id] ||
+        cleanupCopy(question.question),
+      explanation:
+        contentOverride?.explanation ||
+        EXPLANATION_OVERRIDES[question.id] ||
+        cleanupCopy(question.explanation)
+    };
+  });
 }
 
 const questionBank = normalizeQuestionBank(content.questionBank);
