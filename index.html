@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Segurança de Sistemas | Simulado de Prova</title>
+    <meta
+      name="description"
+      content="Simulado responsivo de Segurança de Sistemas com revisão rápida, questões embaralhadas e feedback imediato."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="data.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <svg class="icon-sprite" aria-hidden="true">
+      <symbol id="icon-shield" viewBox="0 0 24 24">
+        <path d="M12 3l7 3v6c0 4.95-2.98 8.94-7 10-4.02-1.06-7-5.05-7-10V6l7-3z" />
+      </symbol>
+      <symbol id="icon-book" viewBox="0 0 24 24">
+        <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5V5.5z" />
+        <path d="M4 19a2 2 0 0 1 2-2h14" />
+      </symbol>
+      <symbol id="icon-bolt" viewBox="0 0 24 24">
+        <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />
+      </symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24">
+        <path d="M12 3l9 5-9 5-9-5 9-5z" />
+        <path d="M3 12l9 5 9-5" />
+        <path d="M3 16l9 5 9-5" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="M20 6L9 17l-5-5" />
+      </symbol>
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <path d="M18 6L6 18" />
+        <path d="M6 6l12 12" />
+      </symbol>
+      <symbol id="icon-arrow" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+        <path d="M13 5l7 7-7 7" />
+      </symbol>
+      <symbol id="icon-refresh" viewBox="0 0 24 24">
+        <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+        <path d="M21 3v6h-6" />
+      </symbol>
+      <symbol id="icon-target" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v3" />
+        <path d="M12 19v3" />
+        <path d="M2 12h3" />
+        <path d="M19 12h3" />
+      </symbol>
+      <symbol id="icon-alert" viewBox="0 0 24 24">
+        <path d="M12 3l9 16H3l9-16z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </symbol>
+      <symbol id="icon-chart" viewBox="0 0 24 24">
+        <path d="M4 19h16" />
+        <path d="M7 16V9" />
+        <path d="M12 16V5" />
+        <path d="M17 16v-3" />
+      </symbol>
+    </svg>
+
+    <div class="page-background">
+      <div class="orb orb-a"></div>
+      <div class="orb orb-b"></div>
+      <div class="grid-glow"></div>
+    </div>
+
+    <main class="app-shell">
+      <header class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Segurança de Sistemas</p>
+          <h1>Simulado de prova com revisão rápida e banco embaralhado</h1>
+          <p class="hero-text">
+            Conteúdo consolidado a partir das aulas sobre fundamentos, ameaças,
+            malwares, tríade CIA e Política de Segurança da Informação. O foco
+            aqui é revisar o que mais pode cair na prova com linguagem de
+            professor, não apenas repetir o slide.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#quiz-panel">
+              <svg class="icon"><use href="#icon-shield"></use></svg>
+              Iniciar simulado
+            </a>
+            <a class="button button-secondary" href="#revision-panel">
+              <svg class="icon"><use href="#icon-book"></use></svg>
+              Ver mapa de revisão
+            </a>
+          </div>
+        </div>
+
+        <div class="hero-side">
+          <div class="stat-card stat-card-accent">
+            <span class="stat-label">Aulas mapeadas</span>
+            <strong class="stat-value" id="deckCount">5</strong>
+            <span class="stat-note">Extraídas dos arquivos `.pptx`</span>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <span class="stat-label">Questões no banco</span>
+              <strong class="stat-value" id="questionCountBadge">0</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Temas cobrados</span>
+              <strong class="stat-value" id="topicCount">0</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Melhor resultado</span>
+              <strong class="stat-value" id="bestScoreBadge">--</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Deploy</span>
+              <strong class="stat-value">GitHub Pages</strong>
+              <span class="stat-note">HTML, CSS e JS puros</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="workspace-grid">
+        <article class="panel setup-panel">
+          <div class="section-head">
+            <p class="eyebrow">Configuração</p>
+            <h2>Monte um simulado novo a cada rodada</h2>
+          </div>
+
+          <div class="control-grid">
+            <label class="control-block" for="questionCount">
+              <span>Quantidade de questões</span>
+              <select id="questionCount" name="questionCount">
+                <option value="15">Sprint de 15</option>
+                <option value="30" selected>Simulado de 30</option>
+                <option value="9999">Banco completo</option>
+              </select>
+            </label>
+
+            <label class="control-block" for="topicFilter">
+              <span>Foco temático</span>
+              <select id="topicFilter" name="topicFilter"></select>
+            </label>
+          </div>
+
+          <div class="action-row">
+            <button class="button button-primary" id="startQuizButton" type="button">
+              <svg class="icon"><use href="#icon-bolt"></use></svg>
+              Gerar simulado
+            </button>
+            <button class="button button-secondary" id="shuffleQuizButton" type="button">
+              <svg class="icon"><use href="#icon-refresh"></use></svg>
+              Reembaralhar
+            </button>
+          </div>
+
+          <p class="setup-note">
+            A ordem das perguntas e das alternativas é sempre embaralhada.
+            Quando você confirma a resposta, o cartão da questão muda de cor e
+            mostra a justificativa antes da próxima.
+          </p>
+        </article>
+
+        <article class="panel pulse-panel">
+          <div class="section-head">
+            <p class="eyebrow">Radar de prova</p>
+            <h2>O que merece mais atenção</h2>
+          </div>
+          <div class="pulse-list" id="pulseList"></div>
+        </article>
+      </section>
+
+      <section class="panel quiz-panel" id="quiz-panel" aria-live="polite">
+        <div class="quiz-header">
+          <div>
+            <p class="eyebrow">Modo prova</p>
+            <h2 id="quizHeading">Questão 1</h2>
+          </div>
+          <div class="quiz-meta">
+            <div class="mini-card">
+              <span>Tempo</span>
+              <strong id="timerValue">00:00</strong>
+            </div>
+            <div class="mini-card">
+              <span>Restantes</span>
+              <strong id="remainingValue">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-track" aria-hidden="true">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-labels">
+            <span id="progressText">0% concluído</span>
+            <span id="progressCount">0/0</span>
+          </div>
+        </div>
+
+        <div class="empty-state" id="emptyState">
+          <svg class="icon icon-xl"><use href="#icon-target"></use></svg>
+          <h3>Simulado pronto para começar</h3>
+          <p>
+            Gere uma rodada e responda uma questão por vez. No fim, você recebe
+            pontuação, análise por tema e revisão dos erros.
+          </p>
+        </div>
+
+        <div class="question-shell hidden" id="questionShell">
+          <article class="question-card" id="questionCard">
+            <div class="question-topline">
+              <span class="pill" id="questionTopic">Tema</span>
+              <span class="pill pill-soft" id="questionDifficulty">Nível</span>
+            </div>
+            <h3 id="questionText"></h3>
+            <p class="question-subtitle" id="questionSubtitle"></p>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="feedback-box hidden" id="feedbackBox"></div>
+          </article>
+
+          <div class="action-row action-row-wide">
+            <button class="button button-primary" id="confirmButton" type="button">
+              <svg class="icon"><use href="#icon-check"></use></svg>
+              Confirmar resposta
+            </button>
+            <button class="button button-secondary" id="nextButton" type="button" disabled>
+              <svg class="icon"><use href="#icon-arrow"></use></svg>
+              Próxima questão
+            </button>
+          </div>
+        </div>
+
+        <div class="result-shell hidden" id="resultShell">
+          <div class="result-hero">
+            <div>
+              <p class="eyebrow">Resultado final</p>
+              <h2 id="resultTitle">Seu desempenho</h2>
+              <p id="resultSummary"></p>
+            </div>
+            <div class="score-ring">
+              <span id="resultScore">0%</span>
+            </div>
+          </div>
+
+          <div class="result-grid">
+            <article class="result-card">
+              <div class="result-card-head">
+                <svg class="icon"><use href="#icon-chart"></use></svg>
+                <h3>Desempenho por tema</h3>
+              </div>
+              <div id="topicBreakdown" class="stack-list"></div>
+            </article>
+
+            <article class="result-card">
+              <div class="result-card-head">
+                <svg class="icon"><use href="#icon-alert"></use></svg>
+                <h3>Questões para revisar</h3>
+              </div>
+              <div id="mistakeReview" class="stack-list"></div>
+            </article>
+          </div>
+
+          <div class="action-row">
+            <button class="button button-primary" id="newRoundButton" type="button">
+              <svg class="icon"><use href="#icon-refresh"></use></svg>
+              Nova rodada
+            </button>
+            <button class="button button-secondary" id="retryMistakesButton" type="button">
+              <svg class="icon"><use href="#icon-target"></use></svg>
+              Revisar só erros
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="revision-grid" id="revision-panel">
+        <article class="panel revision-panel">
+          <div class="section-head">
+            <p class="eyebrow">Mapa de revisão</p>
+            <h2>Resumo do que não pode escapar</h2>
+          </div>
+          <div id="studyGuide" class="guide-list"></div>
+        </article>
+
+        <article class="panel revision-panel">
+          <div class="section-head">
+            <p class="eyebrow">Possíveis enunciados</p>
+            <h2>Padrões de cobrança que fazem sentido para a prova</h2>
+          </div>
+          <div id="examRadar" class="radar-list"></div>
+        </article>
+      </section>
+
+      <footer class="footer-note">
+        <p>
+          Projeto estático, sem build, pronto para publicar no GitHub Pages.
+          Basta subir estes arquivos para um repositório e ativar Pages na
+          branch principal.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
