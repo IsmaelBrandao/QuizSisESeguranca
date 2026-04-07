@@ -132,10 +132,14 @@ select {
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.95fr);
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   padding: clamp(1.4rem, 2vw, 2rem);
   margin-bottom: 1.25rem;
+}
+
+.hero-copy {
+  max-width: 52rem;
 }
 
 .eyebrow {
@@ -230,7 +234,7 @@ select {
 }
 
 .workspace-grid {
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  grid-template-columns: 1fr;
   margin-bottom: 1.25rem;
 }
 

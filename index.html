@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Segurança de Sistemas | Simulado de Prova</title>
+    <title>Quiz de Sistema e Segurança</title>
     <meta
       name="description"
-      content="Simulado responsivo de Segurança de Sistemas com revisão rápida, questões embaralhadas e feedback imediato."
+      content="Quiz responsivo de sistema e segurança com perguntas embaralhadas e feedback imediato."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -84,50 +84,18 @@
     <main class="app-shell">
       <header class="hero panel">
         <div class="hero-copy">
-          <p class="eyebrow">Segurança de Sistemas</p>
-          <h1>Simulado de prova com revisão rápida e banco embaralhado</h1>
+          <p class="eyebrow">Quiz de Sistema e Segurança</p>
+          <h1>Treine para a prova sem enrolação</h1>
           <p class="hero-text">
-            Conteúdo consolidado a partir das aulas sobre fundamentos, ameaças,
-            malwares, tríade CIA e Política de Segurança da Informação. O foco
-            aqui é revisar o que mais pode cair na prova com linguagem de
-            professor, não apenas repetir o slide.
+            Perguntas diretas sobre segurança da informação, riscos, malwares,
+            tríade CIA, controles e política de segurança. Escolha a
+            quantidade, filtre por assunto se quiser e responda no seu ritmo.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="#quiz-panel">
               <svg class="icon"><use href="#icon-shield"></use></svg>
               Iniciar simulado
             </a>
-            <a class="button button-secondary" href="#revision-panel">
-              <svg class="icon"><use href="#icon-book"></use></svg>
-              Ver mapa de revisão
-            </a>
-          </div>
-        </div>
-
-        <div class="hero-side">
-          <div class="stat-card stat-card-accent">
-            <span class="stat-label">Aulas mapeadas</span>
-            <strong class="stat-value" id="deckCount">5</strong>
-            <span class="stat-note">Extraídas dos arquivos `.pptx`</span>
-          </div>
-          <div class="stat-grid">
-            <div class="stat-card">
-              <span class="stat-label">Questões no banco</span>
-              <strong class="stat-value" id="questionCountBadge">0</strong>
-            </div>
-            <div class="stat-card">
-              <span class="stat-label">Temas cobrados</span>
-              <strong class="stat-value" id="topicCount">0</strong>
-            </div>
-            <div class="stat-card">
-              <span class="stat-label">Melhor resultado</span>
-              <strong class="stat-value" id="bestScoreBadge">--</strong>
-            </div>
-            <div class="stat-card">
-              <span class="stat-label">Deploy</span>
-              <strong class="stat-value">GitHub Pages</strong>
-              <span class="stat-note">HTML, CSS e JS puros</span>
-            </div>
           </div>
         </div>
       </header>
@@ -136,7 +104,7 @@
         <article class="panel setup-panel">
           <div class="section-head">
             <p class="eyebrow">Configuração</p>
-            <h2>Monte um simulado novo a cada rodada</h2>
+            <h2>Monte do seu jeito</h2>
           </div>
 
           <div class="control-grid">
@@ -158,27 +126,18 @@
           <div class="action-row">
             <button class="button button-primary" id="startQuizButton" type="button">
               <svg class="icon"><use href="#icon-bolt"></use></svg>
-              Gerar simulado
+              Iniciar simulado
             </button>
             <button class="button button-secondary" id="shuffleQuizButton" type="button">
               <svg class="icon"><use href="#icon-refresh"></use></svg>
-              Reembaralhar
+              Sortear outro
             </button>
           </div>
 
           <p class="setup-note">
-            A ordem das perguntas e das alternativas é sempre embaralhada.
-            Quando você confirma a resposta, o cartão da questão muda de cor e
-            mostra a justificativa antes da próxima.
+            As perguntas e alternativas sempre mudam de ordem. Depois de
+            confirmar, você vê na hora se acertou e segue para a próxima.
           </p>
-        </article>
-
-        <article class="panel pulse-panel">
-          <div class="section-head">
-            <p class="eyebrow">Radar de prova</p>
-            <h2>O que merece mais atenção</h2>
-          </div>
-          <div class="pulse-list" id="pulseList"></div>
         </article>
       </section>
 
@@ -212,10 +171,10 @@
 
         <div class="empty-state" id="emptyState">
           <svg class="icon icon-xl"><use href="#icon-target"></use></svg>
-          <h3>Simulado pronto para começar</h3>
+          <h3>Comece quando quiser</h3>
           <p>
-            Gere uma rodada e responda uma questão por vez. No fim, você recebe
-            pontuação, análise por tema e revisão dos erros.
+            Escolha a quantidade de questões, responda no seu ritmo e veja o
+            resultado no final.
           </p>
         </div>
 
@@ -259,7 +218,7 @@
             <article class="result-card">
               <div class="result-card-head">
                 <svg class="icon"><use href="#icon-chart"></use></svg>
-                <h3>Desempenho por tema</h3>
+                <h3>Como você foi por assunto</h3>
               </div>
               <div id="topicBreakdown" class="stack-list"></div>
             </article>
@@ -280,37 +239,11 @@
             </button>
             <button class="button button-secondary" id="retryMistakesButton" type="button">
               <svg class="icon"><use href="#icon-target"></use></svg>
-              Revisar só erros
+              Refazer erros
             </button>
           </div>
         </div>
       </section>
-
-      <section class="revision-grid" id="revision-panel">
-        <article class="panel revision-panel">
-          <div class="section-head">
-            <p class="eyebrow">Mapa de revisão</p>
-            <h2>Resumo do que não pode escapar</h2>
-          </div>
-          <div id="studyGuide" class="guide-list"></div>
-        </article>
-
-        <article class="panel revision-panel">
-          <div class="section-head">
-            <p class="eyebrow">Possíveis enunciados</p>
-            <h2>Padrões de cobrança que fazem sentido para a prova</h2>
-          </div>
-          <div id="examRadar" class="radar-list"></div>
-        </article>
-      </section>
-
-      <footer class="footer-note">
-        <p>
-          Projeto estático, sem build, pronto para publicar no GitHub Pages.
-          Basta subir estes arquivos para um repositório e ativar Pages na
-          branch principal.
-        </p>
-      </footer>
     </main>
   </body>
 </html>
