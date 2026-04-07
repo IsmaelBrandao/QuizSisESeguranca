@@ -11,7 +11,6 @@ const elements = {
   questionTopic: document.querySelector("#questionTopic"),
   questionDifficulty: document.querySelector("#questionDifficulty"),
   questionText: document.querySelector("#questionText"),
-  questionSubtitle: document.querySelector("#questionSubtitle"),
   optionsGrid: document.querySelector("#optionsGrid"),
   feedbackBox: document.querySelector("#feedbackBox"),
   confirmButton: document.querySelector("#confirmButton"),
@@ -294,7 +293,6 @@ function renderQuestion() {
   elements.questionTopic.textContent = question.topic;
   elements.questionDifficulty.textContent = question.difficulty;
   elements.questionText.textContent = question.question;
-  elements.questionSubtitle.textContent = `${question.subtitle}. Escolha uma alternativa e confirme para continuar.`;
   elements.questionCard.className = "question-card";
   elements.feedbackBox.className = "feedback-box hidden";
   elements.feedbackBox.innerHTML = "";
