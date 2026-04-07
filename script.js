@@ -24,6 +24,10 @@ const elements = {
   resultTitle: document.querySelector("#resultTitle"),
   resultSummary: document.querySelector("#resultSummary"),
   resultScore: document.querySelector("#resultScore"),
+  resultCorrectCount: document.querySelector("#resultCorrectCount"),
+  resultWrongCount: document.querySelector("#resultWrongCount"),
+  resultMessageTitle: document.querySelector("#resultMessageTitle"),
+  resultMessageText: document.querySelector("#resultMessageText"),
   topicBreakdown: document.querySelector("#topicBreakdown"),
   mistakeReview: document.querySelector("#mistakeReview"),
   restartButton: document.querySelector("#restartButton"),
@@ -440,19 +444,52 @@ function renderMistakes() {
   });
 }
 
+function getResultMessage(correct, total) {
+  if (correct === total) {
+    return {
+      title: "Parabéns",
+      text: "Você acertou tudo. Pode ir para a prova com bastante confiança."
+    };
+  }
+
+  if (correct >= 20) {
+    return {
+      title: "Dá pra melhorar",
+      text: "Você já tem uma base boa, mas ainda vale revisar os pontos em que errou."
+    };
+  }
+
+  if (correct >= 10) {
+    return {
+      title: "Precisa melhorar",
+      text: "Você já acertou uma parte, mas ainda precisa reforçar bem o conteúdo."
+    };
+  }
+
+  return {
+    title: "Revise mais",
+    text: "Seu resultado ficou abaixo do ideal. Vale revisar com calma e refazer o quiz."
+  };
+}
+
 function finishQuiz() {
   clearInterval(state.timerId);
   clearProgress();
 
   const total = state.answers.length;
   const correct = state.answers.filter((answer) => answer.isCorrect).length;
+  const wrong = total - correct;
   const percent = total ? Math.round((correct / total) * 100) : 0;
   const elapsed = state.startedAt ? formatElapsed(Date.now() - state.startedAt) : "00:00";
+  const resultMessage = getResultMessage(correct, total);
 
-  elements.resultTitle.textContent =
-    percent >= 85 ? "Mandou bem" : percent >= 70 ? "Boa rodada" : "Vale mais uma rodada";
+  elements.resultTitle.textContent = resultMessage.title;
   elements.resultSummary.textContent = `${correct} de ${total} corretas em ${elapsed}.`;
   elements.resultScore.textContent = `${percent}%`;
+  elements.resultCorrectCount.textContent = String(correct);
+  elements.resultWrongCount.textContent = String(wrong);
+  elements.resultMessageTitle.textContent = resultMessage.title;
+  elements.resultMessageText.textContent = resultMessage.text;
 
   renderBreakdown();
   renderMistakes();

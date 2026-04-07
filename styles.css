@@ -656,6 +656,53 @@ select {
   gap: 1rem;
 }
 
+.result-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.result-stat-card,
+.result-message-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+}
+
+.result-stat-card-success {
+  border-color: rgba(98, 197, 140, 0.35);
+}
+
+.result-stat-card-danger {
+  border-color: rgba(255, 127, 114, 0.35);
+}
+
+.result-stat-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.result-stat-value {
+  display: block;
+  margin-top: 0.3rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+
+.result-message-card strong {
+  display: block;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.1rem;
+}
+
+.result-message-card p {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .score-ring {
   width: 8rem;
   aspect-ratio: 1;
@@ -807,6 +854,7 @@ select {
 @media (max-width: 980px) {
   .hero,
   .workspace-grid,
+  .result-stats,
   .result-grid,
   .revision-grid,
   .radar-list {
