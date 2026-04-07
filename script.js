@@ -1,7 +1,7 @@
 const content = window.quizContent;
+const PROGRESS_KEY = "quiz-sis-seguranca-progress-v1";
 
 const elements = {
-  heroStartButton: document.querySelector("#heroStartButton"),
   startQuizButton: document.querySelector("#startQuizButton"),
   emptyState: document.querySelector("#emptyState"),
   questionShell: document.querySelector("#questionShell"),
@@ -174,6 +174,49 @@ function prepareQuestion(question) {
   };
 }
 
+function readProgress() {
+  try {
+    const raw = window.localStorage.getItem(PROGRESS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function clearProgress() {
+  try {
+    window.localStorage.removeItem(PROGRESS_KEY);
+  } catch {}
+}
+
+function saveProgress() {
+  if (!state.session.length) {
+    clearProgress();
+    return;
+  }
+
+  const payload = {
+    session: state.session,
+    answers: state.answers,
+    currentIndex: state.currentIndex,
+    selectedIndex: state.selectedIndex,
+    confirmed: state.confirmed,
+    elapsedMs: state.startedAt ? Date.now() - state.startedAt : 0
+  };
+
+  try {
+    window.localStorage.setItem(PROGRESS_KEY, JSON.stringify(payload));
+  } catch {}
+}
+
+function startTimer(elapsedMs = 0) {
+  clearInterval(state.timerId);
+  state.startedAt = Date.now() - elapsedMs;
+  state.timerId = window.setInterval(() => {
+    elements.timerValue.textContent = formatElapsed(Date.now() - state.startedAt);
+  }, 1000);
+}
+
 function toggleShell(part) {
   elements.emptyState.classList.toggle("hidden", part !== "empty");
   elements.questionShell.classList.toggle("hidden", part !== "question");
@@ -243,9 +286,6 @@ function renderQuestion() {
     return;
   }
 
-  state.selectedIndex = null;
-  state.confirmed = false;
-
   elements.quizHeading.textContent = `Questão ${state.currentIndex + 1} de ${state.session.length}`;
   elements.questionTopic.textContent = question.topic;
   elements.questionDifficulty.textContent = question.difficulty;
@@ -254,11 +294,30 @@ function renderQuestion() {
   elements.questionCard.className = "question-card";
   elements.feedbackBox.className = "feedback-box hidden";
   elements.feedbackBox.innerHTML = "";
-  elements.confirmButton.disabled = true;
-  elements.nextButton.disabled = true;
 
   renderOptions(question);
+
+  if (state.confirmed && state.selectedIndex !== null) {
+    const selectedOption = question.shuffledOptions[state.selectedIndex];
+    const correctOption = question.shuffledOptions.find((option) => option.isCorrect);
+    const isCorrect = Boolean(selectedOption?.isCorrect);
+
+    elements.questionCard.classList.add(isCorrect ? "is-correct" : "is-wrong");
+    elements.feedbackBox.className = `feedback-box ${isCorrect ? "success" : "error"}`;
+    elements.feedbackBox.innerHTML = `
+      <strong>${isCorrect ? "Resposta correta" : "Resposta incorreta"}</strong>
+      <p>${question.explanation}</p>
+      ${isCorrect ? "" : `<p><strong>Correta:</strong> ${correctOption?.text || "-"}</p>`}
+    `;
+    elements.confirmButton.disabled = true;
+    elements.nextButton.disabled = false;
+  } else {
+    elements.confirmButton.disabled = state.selectedIndex === null;
+    elements.nextButton.disabled = true;
+  }
+
   updateProgress();
+  saveProgress();
 }
 
 function selectOption(index) {
@@ -269,6 +328,7 @@ function selectOption(index) {
   state.selectedIndex = index;
   elements.confirmButton.disabled = false;
   renderOptions(state.session[state.currentIndex]);
+  saveProgress();
 }
 
 function confirmAnswer() {
@@ -304,6 +364,7 @@ function confirmAnswer() {
   elements.nextButton.disabled = false;
   renderOptions(question);
   updateProgress();
+  saveProgress();
 }
 
 function renderBreakdown() {
@@ -381,6 +442,7 @@ function renderMistakes() {
 
 function finishQuiz() {
   clearInterval(state.timerId);
+  clearProgress();
 
   const total = state.answers.length;
   const correct = state.answers.filter((answer) => answer.isCorrect).length;
@@ -409,6 +471,8 @@ function nextQuestion() {
   }
 
   state.currentIndex += 1;
+  state.selectedIndex = null;
+  state.confirmed = false;
   renderQuestion();
 }
 
@@ -417,12 +481,7 @@ function resetSessionState() {
   state.currentIndex = 0;
   state.selectedIndex = null;
   state.confirmed = false;
-  state.startedAt = Date.now();
-
-  clearInterval(state.timerId);
-  state.timerId = window.setInterval(() => {
-    elements.timerValue.textContent = formatElapsed(Date.now() - state.startedAt);
-  }, 1000);
+  startTimer(0);
 }
 
 function startQuiz() {
@@ -431,6 +490,27 @@ function startQuiz() {
   toggleShell("question");
   renderQuestion();
   elements.quizPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function restoreProgress(progress) {
+  if (!progress || !Array.isArray(progress.session) || !progress.session.length) {
+    return false;
+  }
+
+  if ((progress.currentIndex ?? 0) >= progress.session.length) {
+    clearProgress();
+    return false;
+  }
+
+  state.session = progress.session;
+  state.answers = Array.isArray(progress.answers) ? progress.answers : [];
+  state.currentIndex = Number.isInteger(progress.currentIndex) ? progress.currentIndex : 0;
+  state.selectedIndex = typeof progress.selectedIndex === "number" ? progress.selectedIndex : null;
+  state.confirmed = Boolean(progress.confirmed);
+  startTimer(typeof progress.elapsedMs === "number" ? progress.elapsedMs : 0);
+  toggleShell("question");
+  renderQuestion();
+  return true;
 }
 
 function handleOptionClick(event) {
@@ -443,13 +523,15 @@ function handleOptionClick(event) {
 }
 
 function bootstrap() {
-  toggleShell("empty");
-  updateProgress();
+  const restored = restoreProgress(readProgress());
+  if (!restored) {
+    toggleShell("empty");
+    updateProgress();
+  }
 
   elements.optionsGrid.addEventListener("click", handleOptionClick);
   elements.confirmButton.addEventListener("click", confirmAnswer);
   elements.nextButton.addEventListener("click", nextQuestion);
-  elements.heroStartButton.addEventListener("click", startQuiz);
   elements.startQuizButton.addEventListener("click", startQuiz);
   elements.restartButton.addEventListener("click", startQuiz);
 }
