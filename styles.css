@@ -647,6 +647,10 @@ select {
   justify-content: space-between;
 }
 
+.action-row-center {
+  justify-content: center;
+}
+
 .result-shell {
   display: grid;
   gap: 1rem;

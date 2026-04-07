@@ -1,17 +1,8 @@
 const content = window.quizContent;
 
 const elements = {
-  deckCount: document.querySelector("#deckCount"),
-  questionCountBadge: document.querySelector("#questionCountBadge"),
-  topicCount: document.querySelector("#topicCount"),
-  bestScoreBadge: document.querySelector("#bestScoreBadge"),
-  questionCountSelect: document.querySelector("#questionCount"),
-  topicFilter: document.querySelector("#topicFilter"),
-  pulseList: document.querySelector("#pulseList"),
-  studyGuide: document.querySelector("#studyGuide"),
-  examRadar: document.querySelector("#examRadar"),
+  heroStartButton: document.querySelector("#heroStartButton"),
   startQuizButton: document.querySelector("#startQuizButton"),
-  shuffleQuizButton: document.querySelector("#shuffleQuizButton"),
   emptyState: document.querySelector("#emptyState"),
   questionShell: document.querySelector("#questionShell"),
   resultShell: document.querySelector("#resultShell"),
@@ -35,12 +26,10 @@ const elements = {
   resultScore: document.querySelector("#resultScore"),
   topicBreakdown: document.querySelector("#topicBreakdown"),
   mistakeReview: document.querySelector("#mistakeReview"),
-  newRoundButton: document.querySelector("#newRoundButton"),
-  retryMistakesButton: document.querySelector("#retryMistakesButton"),
+  restartButton: document.querySelector("#restartButton"),
   quizPanel: document.querySelector("#quiz-panel")
 };
 
-const STORAGE_KEY = "sistema-seguranca-quiz-stats";
 const OPTION_LABELS = ["A", "B", "C", "D", "E"];
 
 const state = {
@@ -50,8 +39,7 @@ const state = {
   selectedIndex: null,
   confirmed: false,
   startedAt: null,
-  timerId: null,
-  lastMistakeIds: []
+  timerId: null
 };
 
 const QUESTION_OVERRIDES = {
@@ -95,6 +83,7 @@ const EXPLANATION_OVERRIDES = {
   "fund-05": "Entre os exemplos mais comuns estão firewalls, criptografia, IA, backups, redundância e recuperação de desastres.",
   "risk-01": "Ameaça é tudo aquilo que pode explorar vulnerabilidades e comprometer informações.",
   "risk-05": "Erro de configuração é um exemplo clássico de vulnerabilidade.",
+  "risk-06": "Há ameaça, vulnerabilidade e potencial de impacto, formando um cenário clássico de risco.",
   "risk-07": "Entre os impactos mais comuns estão perda de dados, vazamento, interrupção do negócio e dano à reputação.",
   "hist-01": "Esse período era marcado por mainframes caros, centralizados e fisicamente controlados.",
   "hist-02": "Esse caso mostra que testes práticos ajudam a revelar fragilidades reais.",
@@ -105,7 +94,6 @@ const EXPLANATION_OVERRIDES = {
   "mal-03": "Um vírus pode se espalhar por e-mail, sites ou dispositivos removíveis e comprometer arquivos e sistemas.",
   "mal-05": "Bots são programas automatizados; botnets são redes de dispositivos infectados controladas remotamente.",
   "mal-07": "Trojan se destaca por se disfarçar de programa legítimo e depender da ação do usuário.",
-  "risk-06": "Há ameaça, vulnerabilidade e potencial de impacto, formando um cenário clássico de risco.",
   "cia-04": "Acesso exclusivo do titular corresponde à confidencialidade.",
   "cia-06": "Quando o sistema precisa funcionar sempre que necessário, o foco é disponibilidade.",
   "cia-07": "Não repúdio significa que o autor de uma ação não pode negá-la depois.",
@@ -168,220 +156,35 @@ function shuffle(items) {
 }
 
 function formatElapsed(ms) {
-  const seconds = Math.max(0, Math.floor(ms / 1000));
-  const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
-  const rest = String(seconds % 60).padStart(2, "0");
-  return `${minutes}:${rest}`;
-}
-
-function readStats() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-  } catch {
-    return {};
-  }
-}
-
-function writeStats(payload) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-}
-
-function getTopics() {
-  return [...new Set(questionBank.map((question) => question.topic))];
-}
-
-function renderStats() {
-  if (!elements.deckCount && !elements.questionCountBadge && !elements.topicCount && !elements.bestScoreBadge) {
-    return;
-  }
-
-  const stats = readStats();
-
-  if (elements.deckCount) {
-    elements.deckCount.textContent = String(content.decks);
-  }
-
-  if (elements.questionCountBadge) {
-    elements.questionCountBadge.textContent = String(questionBank.length);
-  }
-
-  if (elements.topicCount) {
-    elements.topicCount.textContent = String(getTopics().length);
-  }
-
-  if (elements.bestScoreBadge) {
-    elements.bestScoreBadge.textContent = stats.bestPercent ? `${stats.bestPercent}%` : "--";
-  }
-}
-
-function renderTopicFilter() {
-  const topics = getTopics();
-  const topicCountMap = questionBank.reduce((accumulator, question) => {
-    accumulator[question.topic] = (accumulator[question.topic] || 0) + 1;
-    return accumulator;
-  }, {});
-
-  elements.topicFilter.innerHTML = "";
-
-  const allOption = document.createElement("option");
-  allOption.value = "all";
-  allOption.textContent = `Todos os temas (${questionBank.length})`;
-  elements.topicFilter.appendChild(allOption);
-
-  topics.forEach((topic) => {
-    const option = document.createElement("option");
-    option.value = topic;
-    option.textContent = `${topic} (${topicCountMap[topic]})`;
-    elements.topicFilter.appendChild(option);
-  });
-
-  const fullOption = [...elements.questionCountSelect.options].find((option) => option.value === "9999");
-  if (fullOption) {
-    fullOption.textContent = `Banco completo (${questionBank.length})`;
-  }
-}
-
-function renderPulseList() {
-  if (!elements.pulseList) {
-    return;
-  }
-
-  elements.pulseList.innerHTML = "";
-
-  content.examRadar.slice(0, 4).forEach((item) => {
-    const card = document.createElement("article");
-    card.className = "pulse-item";
-
-    const badge = document.createElement("div");
-    badge.className = "pulse-badge";
-    badge.innerHTML = '<svg class="icon"><use href="#icon-bolt"></use></svg>';
-
-    const copy = document.createElement("div");
-    const title = document.createElement("strong");
-    title.textContent = item.title;
-    const text = document.createElement("p");
-    text.textContent = item.text;
-
-    copy.append(title, text);
-    card.append(badge, copy);
-    elements.pulseList.appendChild(card);
-  });
-}
-
-function renderGuide() {
-  if (!elements.studyGuide) {
-    return;
-  }
-
-  elements.studyGuide.innerHTML = "";
-
-  content.studyGuide.forEach((section, index) => {
-    const details = document.createElement("details");
-    details.className = "guide-item";
-    details.open = index < 3;
-
-    const summary = document.createElement("summary");
-    summary.textContent = section.title;
-
-    const body = document.createElement("div");
-    body.className = "guide-body";
-
-    const paragraph = document.createElement("p");
-    paragraph.textContent = section.summary;
-
-    const list = document.createElement("ul");
-    section.bullets.forEach((bullet) => {
-      const item = document.createElement("li");
-      item.textContent = bullet;
-      list.appendChild(item);
-    });
-
-    body.append(paragraph, list);
-    details.append(summary, body);
-    elements.studyGuide.appendChild(details);
-  });
-}
-
-function renderRadar() {
-  if (!elements.examRadar) {
-    return;
-  }
-
-  elements.examRadar.innerHTML = "";
-
-  content.examRadar.forEach((item) => {
-    const card = document.createElement("article");
-    card.className = "radar-card";
-
-    const tag = document.createElement("span");
-    tag.textContent = item.tag;
-
-    const title = document.createElement("strong");
-    title.textContent = item.title;
-
-    const text = document.createElement("p");
-    text.textContent = item.text;
-
-    card.append(tag, title, text);
-    elements.examRadar.appendChild(card);
-  });
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
 }
 
 function prepareQuestion(question) {
-  const options = shuffle(
-    question.options.map((text, index) => ({
-      text,
-      isCorrect: index === question.answer
-    }))
-  );
-
   return {
     ...question,
-    shuffledOptions: options
+    shuffledOptions: shuffle(
+      question.options.map((text, index) => ({
+        text,
+        isCorrect: index === question.answer
+      }))
+    )
   };
 }
 
-function getRequestedCount(poolLength) {
-  const rawValue = Number(elements.questionCountSelect.value);
-  if (rawValue >= poolLength || rawValue === 9999) {
-    return poolLength;
-  }
-
-  return Math.max(1, rawValue);
-}
-
-function buildPool(questionIds = null) {
-  const selectedTopic = elements.topicFilter.value;
-  let pool = [...questionBank];
-
-  if (questionIds && questionIds.length) {
-    const idSet = new Set(questionIds);
-    pool = pool.filter((question) => idSet.has(question.id));
-  } else if (selectedTopic !== "all") {
-    pool = pool.filter((question) => question.topic === selectedTopic);
-  }
-
-  return pool;
-}
-
-function resetSessionState() {
-  state.answers = [];
-  state.currentIndex = 0;
-  state.selectedIndex = null;
-  state.confirmed = false;
-  state.startedAt = Date.now();
-
-  clearInterval(state.timerId);
-  state.timerId = window.setInterval(() => {
-    elements.timerValue.textContent = formatElapsed(Date.now() - state.startedAt);
-  }, 1000);
+function toggleShell(part) {
+  elements.emptyState.classList.toggle("hidden", part !== "empty");
+  elements.questionShell.classList.toggle("hidden", part !== "question");
+  elements.resultShell.classList.toggle("hidden", part !== "result");
 }
 
 function updateProgress() {
   if (!state.session.length) {
     elements.progressFill.style.width = "0%";
     elements.progressText.textContent = "0% concluído";
-    elements.progressCount.textContent = "0/0 respondidas";
+    elements.progressCount.textContent = `0/${questionBank.length}`;
     elements.remainingValue.textContent = "0";
     elements.timerValue.textContent = "00:00";
     return;
@@ -394,15 +197,9 @@ function updateProgress() {
 
   elements.progressFill.style.width = `${percent}%`;
   elements.progressText.textContent = `${percent}% concluído`;
-  elements.progressCount.textContent = `${answered}/${total} respondidas`;
+  elements.progressCount.textContent = `${answered}/${total}`;
   elements.remainingValue.textContent = String(remaining);
   elements.timerValue.textContent = state.startedAt ? formatElapsed(Date.now() - state.startedAt) : "00:00";
-}
-
-function toggleShell(visiblePart) {
-  elements.emptyState.classList.toggle("hidden", visiblePart !== "empty");
-  elements.questionShell.classList.toggle("hidden", visiblePart !== "question");
-  elements.resultShell.classList.toggle("hidden", visiblePart !== "result");
 }
 
 function renderOptions(question) {
@@ -453,7 +250,7 @@ function renderQuestion() {
   elements.questionTopic.textContent = question.topic;
   elements.questionDifficulty.textContent = question.difficulty;
   elements.questionText.textContent = question.question;
-  elements.questionSubtitle.textContent = `${question.subtitle}. Selecione uma alternativa e confirme antes de avançar.`;
+  elements.questionSubtitle.textContent = `${question.subtitle}. Escolha uma alternativa e confirme para continuar.`;
   elements.questionCard.className = "question-card";
   elements.feedbackBox.className = "feedback-box hidden";
   elements.feedbackBox.innerHTML = "";
@@ -464,12 +261,12 @@ function renderQuestion() {
   updateProgress();
 }
 
-function selectOption(optionIndex) {
+function selectOption(index) {
   if (state.confirmed) {
     return;
   }
 
-  state.selectedIndex = optionIndex;
+  state.selectedIndex = index;
   elements.confirmButton.disabled = false;
   renderOptions(state.session[state.currentIndex]);
 }
@@ -482,7 +279,7 @@ function confirmAnswer() {
   const question = state.session[state.currentIndex];
   const selectedOption = question.shuffledOptions[state.selectedIndex];
   const correctOption = question.shuffledOptions.find((option) => option.isCorrect);
-  const isCorrect = Boolean(selectedOption && selectedOption.isCorrect);
+  const isCorrect = Boolean(selectedOption?.isCorrect);
 
   state.confirmed = true;
   state.answers.push({
@@ -531,12 +328,11 @@ function renderBreakdown() {
       const title = document.createElement("strong");
       title.textContent = topic;
 
-      const score = Math.round((values.correct / values.total) * 100);
       const detail = document.createElement("p");
       detail.textContent = `${values.correct} de ${values.total} corretas`;
 
       const ratio = document.createElement("span");
-      ratio.textContent = `${score}% de aproveitamento`;
+      ratio.textContent = `${Math.round((values.correct / values.total) * 100)}% de aproveitamento`;
 
       item.append(title, detail, ratio);
       elements.topicBreakdown.appendChild(item);
@@ -545,15 +341,18 @@ function renderBreakdown() {
 
 function renderMistakes() {
   elements.mistakeReview.innerHTML = "";
-  const mistakes = state.answers.filter((answer) => !answer.isCorrect);
 
+  const mistakes = state.answers.filter((answer) => !answer.isCorrect);
   if (!mistakes.length) {
     const item = document.createElement("article");
     item.className = "mistake-item";
+
     const title = document.createElement("strong");
     title.textContent = "Rodada limpa";
+
     const text = document.createElement("p");
-    text.textContent = "Se quiser, sorteie outra rodada ou refaça o quiz inteiro.";
+    text.textContent = "Você fechou a rodada sem erros.";
+
     item.append(title, text);
     elements.mistakeReview.appendChild(item);
     return;
@@ -580,17 +379,6 @@ function renderMistakes() {
   });
 }
 
-function persistRound(scorePercent) {
-  const stats = readStats();
-  const nextStats = {
-    bestPercent: Math.max(stats.bestPercent || 0, scorePercent),
-    lastPercent: scorePercent,
-    updatedAt: new Date().toISOString()
-  };
-
-  writeStats(nextStats);
-}
-
 function finishQuiz() {
   clearInterval(state.timerId);
 
@@ -599,17 +387,13 @@ function finishQuiz() {
   const percent = total ? Math.round((correct / total) * 100) : 0;
   const elapsed = state.startedAt ? formatElapsed(Date.now() - state.startedAt) : "00:00";
 
-  state.lastMistakeIds = state.answers.filter((answer) => !answer.isCorrect).map((answer) => answer.id);
-
   elements.resultTitle.textContent =
     percent >= 85 ? "Mandou bem" : percent >= 70 ? "Boa rodada" : "Vale mais uma rodada";
   elements.resultSummary.textContent = `${correct} de ${total} corretas em ${elapsed}.`;
   elements.resultScore.textContent = `${percent}%`;
-  elements.retryMistakesButton.disabled = state.lastMistakeIds.length === 0;
 
   renderBreakdown();
   renderMistakes();
-  persistRound(percent);
   toggleShell("result");
   elements.quizPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -628,15 +412,21 @@ function nextQuestion() {
   renderQuestion();
 }
 
-function startQuiz(questionIds = null) {
-  const pool = buildPool(questionIds);
-  const requestedCount = questionIds && questionIds.length ? pool.length : getRequestedCount(pool.length);
+function resetSessionState() {
+  state.answers = [];
+  state.currentIndex = 0;
+  state.selectedIndex = null;
+  state.confirmed = false;
+  state.startedAt = Date.now();
 
-  if (!pool.length) {
-    return;
-  }
+  clearInterval(state.timerId);
+  state.timerId = window.setInterval(() => {
+    elements.timerValue.textContent = formatElapsed(Date.now() - state.startedAt);
+  }, 1000);
+}
 
-  state.session = shuffle(pool).slice(0, requestedCount).map(prepareQuestion);
+function startQuiz() {
+  state.session = shuffle(questionBank).map(prepareQuestion);
   resetSessionState();
   toggleShell("question");
   renderQuestion();
@@ -644,31 +434,24 @@ function startQuiz(questionIds = null) {
 }
 
 function handleOptionClick(event) {
-  const target = event.target.closest(".option");
-  if (!target) {
+  const option = event.target.closest(".option");
+  if (!option) {
     return;
   }
 
-  selectOption(Number(target.dataset.index));
+  selectOption(Number(option.dataset.index));
 }
 
 function bootstrap() {
-  renderStats();
-  renderTopicFilter();
   toggleShell("empty");
   updateProgress();
 
   elements.optionsGrid.addEventListener("click", handleOptionClick);
   elements.confirmButton.addEventListener("click", confirmAnswer);
   elements.nextButton.addEventListener("click", nextQuestion);
-  elements.startQuizButton.addEventListener("click", () => startQuiz());
-  elements.shuffleQuizButton.addEventListener("click", () => startQuiz());
-  elements.newRoundButton.addEventListener("click", () => startQuiz());
-  elements.retryMistakesButton.addEventListener("click", () => {
-    if (state.lastMistakeIds.length) {
-      startQuiz(state.lastMistakeIds);
-    }
-  });
+  elements.heroStartButton.addEventListener("click", startQuiz);
+  elements.startQuizButton.addEventListener("click", startQuiz);
+  elements.restartButton.addEventListener("click", startQuiz);
 }
 
 bootstrap();
