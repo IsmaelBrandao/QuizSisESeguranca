@@ -1,5 +1,5 @@
 function plainText(text) {
-  return text
+  const cleaned = text
     .replace(/Arranjo integrado/gi, "Conjunto integrado")
     .replace(/fragilidade estrutural/gi, "falha")
     .replace(/suscetível a exploração/gi, "que pode ser explorada")
@@ -11,6 +11,12 @@ function plainText(text) {
     .replace(/\s+([?.!,;:])/g, "$1")
     .replace(/\(\s*\)/g, "")
     .trim();
+
+  if (!cleaned) {
+    return cleaned;
+  }
+
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
 }
 
 const hard = (_question, options) => ({
@@ -22,10 +28,10 @@ window.quizQuestionOverrides = {
   "fund-01": hard(
     "Sem recorrer a exemplos externos, qual formulação preserva com maior fidelidade a amplitude conceitual que os slides atribuem à segurança da informação?",
     [
-      "Arranjo integrado de práticas, políticas, controles e tecnologias orientado a evitar acesso, uso, alteração, destruição ou indisponibilidade indevidos da informação.",
+      "Conjunto de práticas, regras, controles e tecnologias para proteger a informação contra acesso, alteração, destruição ou indisponibilidade indevidos.",
       "Camada essencialmente perimetral, composta por antivírus e firewall, destinada a barrar tráfego hostil vindo da internet.",
       "Estratégia de isolamento físico de arquivos críticos em servidores sem conexão, suficiente por si só para caracterizar segurança da informação.",
-      "Restrição administrativa que transfere ao setor de TI o uso exclusivo dos computadores corporativos."
+      "Restrição administrativa que limita o uso dos computadores ao setor de TI como forma principal de proteção."
     ]
   ),
   "fund-02": hard(
@@ -42,7 +48,7 @@ window.quizQuestionOverrides = {
     [
       "Porque somente equipes técnicas operam controles e, por isso, substituem processos formais.",
       "Porque, uma vez autenticado, o usuário deixa de representar superfície relevante de risco.",
-      "Porque pessoas podem bloquear ataques por comportamento consciente, mas também viabilizá-los quando faltam treinamento, cultura e mudança de conduta.",
+      "Porque as pessoas podem barrar riscos com boas práticas, mas também facilitar ataques quando faltam treinamento e atenção.",
       "Porque mecanismos criptográficos tornam residual a influência de decisões humanas sobre a segurança."
     ]
   ),
@@ -59,7 +65,7 @@ window.quizQuestionOverrides = {
     "Qual descrição evita reduzir indevidamente o papel da tecnologia no modelo apresentado pelas aulas?",
     [
       "A tecnologia atua quase exclusivamente na recuperação posterior ao incidente, sem papel relevante na prevenção.",
-      "A tecnologia atua em prevenção, detecção e resposta, além de apoiar identidade, proteção de dados, monitoramento e resiliência operacional.",
+      "A tecnologia atua em prevenção, detecção e resposta, além de apoiar acesso, proteção de dados e continuidade do serviço.",
       "A tecnologia cumpre função acessória, limitada a armazenar cópias de segurança fora da organização.",
       "A tecnologia, quando bem escolhida, torna dispensáveis processos formais e conscientização humana."
     ]
@@ -69,7 +75,7 @@ window.quizQuestionOverrides = {
     [
       "Somente bases de dados e sistemas de informação.",
       "Apenas redes, enlaces e equipamentos computacionais.",
-      "Dados digitais, sistemas de informação, redes, equipamentos, pessoas e processos organizacionais.",
+      "Dados, sistemas, redes, equipamentos, pessoas e processos da organização.",
       "Exclusivamente conteúdos previamente classificados como confidenciais."
     ]
   ),
@@ -218,7 +224,7 @@ window.quizQuestionOverrides = {
     "Se a cobrança vier por contraste fino, qual opção descreve worm sem importar para ele traços típicos de outros malwares?",
     [
       "Programa malicioso que depende da decisão do usuário e se oculta sob aparência legítima.",
-      "Malware autossuficiente que se propaga explorando falhas de segurança, sem precisar infectar arquivo para circular.",
+      "Malware que se espalha sozinho ao explorar falhas, sem depender de arquivo infectado.",
       "Ferramenta utilitária usada para gerar hashes e validar integridade de dados.",
       "Registro cronológico de ações executadas em sistemas, útil para auditoria."
     ]
@@ -347,19 +353,19 @@ window.quizQuestionOverrides = {
   "ctrl-01": hard(
     "Se a questão vier por associação negativa, qual conjunto ainda permanece corretamente vinculado à confidencialidade e não a integridade ou disponibilidade?",
     [
-      "Hash criptográfico e logs de auditoria.",
+      "Hash criptográfico e registros de auditoria usados para verificar mudanças e rastrear eventos.",
       "Criptografia simétrica, criptografia assimétrica, controle de acesso e políticas de senha.",
-      "Backup, redundância, failover e balanceamento de carga.",
-      "Plano de continuidade, revisão de PSI e inventário patrimonial."
+      "Backup, redundância, failover e balanceamento voltados a manter o serviço disponível.",
+      "Plano de continuidade, revisão de política e controle geral do ambiente."
     ]
   ),
   "ctrl-02": hard(
     "Qual formulação mais se aproxima da definição de hash criptográfico apresentada na aula, sem confundi-lo com criptografia reversível ou com protocolo de rede?",
     [
-      "Algoritmo matemático que transforma dados em uma sequência fixa e única, funcionando como uma impressão digital do conteúdo.",
+      "Algoritmo que transforma um dado em uma sequência fixa, como uma impressão digital do conteúdo.",
       "Ferramenta destinada a distribuir requisições entre múltiplos servidores e reduzir latência.",
       "Protocolo de camada local usado para descobrir o endereço MAC correspondente a um IP.",
-      "Método pedagógico empregado em programas de treinamento contra phishing."
+      "Método usado em treinamento para ensinar usuários a reconhecer golpes e e-mails falsos."
     ]
   ),
   "ctrl-03": hard(
@@ -395,14 +401,14 @@ window.quizQuestionOverrides = {
       "Eliminar a necessidade de mecanismos complementares, como autenticação multifator.",
       "Definir regras para incentivar senhas fortes e uso adequado conforme requisitos da organização.",
       "Permitir que cada usuário adote qualquer padrão, desde que memorize a própria senha.",
-      "Substituir integralmente ACLs, ACEs e controles de diretório."
+      "Substituir integralmente ACLs, ACEs e outros controles de diretório da rede."
     ]
   ),
   "ctrl-07": hard(
     "Qual comparação respeita a diferença funcional entre redundância e balanceamento tal como ela aparece na trilha de disponibilidade?",
     [
       "Redundância distribui carga entre múltiplos nós; balanceamento substitui backup e recuperação.",
-      "Redundância mantém cópias ou recursos de reserva; balanceamento distribui tráfego para eficiência e menor latência.",
+      "Redundância mantém recursos de reserva; balanceamento divide o tráfego para melhorar a resposta.",
       "Redundância reforça somente confidencialidade; balanceamento reforça somente integridade.",
       "Ambos existem principalmente para detectar campanhas de phishing em tempo real."
     ]
@@ -457,10 +463,10 @@ window.quizQuestionOverrides = {
   "psi-05": hard(
     "No bloco de acessos e controle, qual formulação preserva a intenção normativa que os slides destacam?",
     [
-      "Regras para que apenas pessoas autorizadas acessem dados sensíveis, com autenticação, controle de privilégios e segregação de funções.",
-      "Orientações para instalar livremente softwares, desde que voltados à produtividade do usuário.",
-      "Permissão ampla a qualquer colaborador, desde que o acesso seja registrado em log.",
-      "Aquisição de novos computadores como medida suficiente de controle de acesso."
+      "Regras para acesso a dados sensíveis, com autenticação, níveis de permissão e separação de funções.",
+      "Orientações para instalar livremente softwares úteis ao trabalho, mesmo sem aprovação prévia.",
+      "Permissão ampla a qualquer colaborador, desde que o acesso fique registrado em log.",
+      "Compra de novos computadores como principal medida para controlar acesso a dados."
     ]
   ),
   "psi-06": hard(
@@ -484,7 +490,7 @@ window.quizQuestionOverrides = {
   "psi-08": hard(
     "Por que treinamento e conscientização aparecem como parte da PSI e não como apêndice opcional?",
     [
-      "Porque segurança depende de comportamento, boas práticas e capacidade do colaborador de reconhecer riscos como phishing.",
+      "Porque a segurança também depende do comportamento do colaborador e da capacidade de reconhecer riscos.",
       "Porque programas de treinamento tornam desnecessários controles técnicos e processos formais.",
       "Porque sua finalidade se restringe a ensinar uso de e-mail e produtividade básica.",
       "Porque incidentes de segurança atingem, em essência, apenas a área de recursos humanos."
@@ -538,7 +544,7 @@ window.quizQuestionOverrides = {
   "psi-14": hard(
     "Por que a revisão periódica é tratada como requisito e não como detalhe editorial de uma PSI?",
     [
-      "Porque uma política eficaz é dinâmica e precisa acompanhar mudanças tecnológicas, novas ameaças e alterações legais.",
+      "Porque a política precisa acompanhar novas ameaças, mudanças tecnológicas e regras legais.",
       "Porque toda política perde validade automaticamente em intervalos semanais fixos.",
       "Porque revisar significa, sobretudo, atualizar identidade visual e nomenclaturas do documento.",
       "Porque o histórico de versões é irrelevante diante da necessidade de rapidez."
@@ -547,7 +553,7 @@ window.quizQuestionOverrides = {
   "psi-15": hard(
     "Se a avaliação exigisse elaborar uma PSI coerente com o material, qual caminho metodológico seria o mais aderente?",
     [
-      "Criar um cenário corporativo e estruturá-lo por objetivos, âmbito, classificação, acesso, riscos, incidentes, backup, conformidade e revisão.",
+      "Criar uma política com objetivos, alcance, classificação, acesso, riscos, incidentes, backup, conformidade e revisão.",
       "Produzir um parágrafo genérico sobre a importância abstrata da segurança, sem recorte organizacional.",
       "Listar softwares usados pela empresa, dispensando regras, responsabilidades e classificação da informação.",
       "Concentrar a resposta apenas em requisitos de rede, ignorando pessoas, processos e governança."
@@ -623,10 +629,10 @@ window.quizQuestionOverrides = {
   "mix-06": hard(
     "Se uma empresa consegue restaurar seus dados depois de um ransomware graças a backups confiáveis, quais princípios ficam mais evidentes nesse desfecho?",
     [
-      "Disponibilidade e integridade.",
-      "Somente confidencialidade.",
-      "Somente não repúdio.",
-      "Classificação da informação e delimitação de âmbito."
+      "Disponibilidade do sistema e integridade dos dados.",
+      "Somente confidencialidade da informação.",
+      "Somente não repúdio da ação realizada.",
+      "Classificação da informação e definição de escopo."
     ]
   ),
 };

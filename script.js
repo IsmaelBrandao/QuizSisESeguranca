@@ -166,6 +166,22 @@ function normalizeQuestionBank(questionBank) {
 
 const questionBank = normalizeQuestionBank(content.questionBank);
 
+function computeQuizVersion(questionBank) {
+  const text = questionBank
+    .map((question) => [question.id, question.question, ...question.options].join("|"))
+    .join("||");
+
+  let hash = 0;
+
+  for (let index = 0; index < text.length; index += 1) {
+    hash = (hash * 31 + text.charCodeAt(index)) >>> 0;
+  }
+
+  return `bank-${hash.toString(16)}`;
+}
+
+const QUIZ_CONTENT_VERSION = computeQuizVersion(questionBank);
+
 function shuffle(items) {
   const cloned = [...items];
 
@@ -199,7 +215,18 @@ function prepareQuestion(question) {
 function readProgress() {
   try {
     const raw = window.localStorage.getItem(PROGRESS_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const parsed = raw ? JSON.parse(raw) : null;
+
+    if (!parsed) {
+      return null;
+    }
+
+    if (parsed.version !== QUIZ_CONTENT_VERSION) {
+      clearProgress();
+      return null;
+    }
+
+    return parsed;
   } catch {
     return null;
   }
@@ -218,6 +245,7 @@ function saveProgress() {
   }
 
   const payload = {
+    version: QUIZ_CONTENT_VERSION,
     session: state.session,
     answers: state.answers,
     currentIndex: state.currentIndex,
